@@ -4,7 +4,7 @@ defmodule Graph.Indexer do
 
   # API
   def start_link() do
-    GenServer.start_link(__MODULE__, :ok, [name: Graph.Indexer])
+    GenServer.start_link(__MODULE__, :ok, name: Graph.Indexer)
   end
 
   def add_index(index_type, index, index_value) do
@@ -23,7 +23,7 @@ defmodule Graph.Indexer do
     GenServer.call(Graph.Indexer, {:get_indexes, index_type})
   end
 
-  #Callbacks
+  # Callbacks
   @impl true
   def init(:ok) do
     {:ok, %{:vertex_index => %{}, :label => %{}}}
@@ -31,17 +31,22 @@ defmodule Graph.Indexer do
 
   @impl true
   def handle_cast({:add_index, {index_type, index, index_value}}, state) do
-    state = if Map.has_key?(state, index_type) do
-      state
-    else
-      Map.put(state, index_type, %{})
-    end
+    state =
+      if Map.has_key?(state, index_type) do
+        state
+      else
+        Map.put(state, index_type, %{})
+      end
+
     %{^index_type => indexes} = state
-    indexes = if Map.has_key?(indexes, index) do
-      indexes
-    else
-      Map.put(indexes, index, [])
-    end
+
+    indexes =
+      if Map.has_key?(indexes, index) do
+        indexes
+      else
+        Map.put(indexes, index, [])
+      end
+
     %{^index => index_list} = indexes
     indexes = Map.put(indexes, index, [index_value | index_list])
     {:noreply, %{state | index_type => indexes}}

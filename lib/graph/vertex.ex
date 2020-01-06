@@ -5,7 +5,7 @@ defmodule Graph.Vertex do
   # API
   def start_link(index, labels \\ [], keys \\ %{}) do
     name = index_to_name(index)
-    GenServer.start_link(__MODULE__, {index, labels, keys}, [name: name])
+    GenServer.start_link(__MODULE__, {index, labels, keys}, name: name)
   end
 
   def add_edge(vertex_index, edge_index) do
@@ -79,12 +79,14 @@ defmodule Graph.Vertex do
 
   @impl true
   def handle_cast({:add_edge, edge_index}, state = %{edges: edges}) do
+    Process.monitor(index_to_name(edge_index))
     edges = [edge_index | edges]
     {:noreply, %{state | edges: edges}}
   end
 
   @impl true
   def handle_cast({:remove_edge, edge_index}, state = %{edges: edges}) do
+    Process.demonitor(index_to_name(edge_index))
     edges = List.delete(edges, edge_index)
     {:noreply, %{state | edges: edges}}
   end
@@ -115,8 +117,26 @@ defmodule Graph.Vertex do
     {:noreply, %{state | keys: keys}}
   end
 
+  @impl true
+  def handle_info({:DOWN, _ref, :process, pid, _reason}, state = %{edges: edges}) do
+    name = elem(pid, 0)
+    edges = List.delete(edges, name_to_index(name))
+    {:noreply, %{state | edges: edges}}
+  end
+
+  @impl true
+  def handle_info(_msg, state) do
+    {:noreply, state}
+  end
+
   # Utils
   defp index_to_name(index) do
     String.to_atom("Graph.Edge.#{index}")
+  end
+
+  defp name_to_index(name) do
+    to_string(name)
+    |> String.split(".")
+    |> List.last()
   end
 end
