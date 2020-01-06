@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="d13f45df-4d81-4bcc-a4d4-45b59bbcf6b9" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Elixir Module" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1VzVXsgHfm87lJqZc8iL8ojeyGo" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../kv" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib/graph" />
+    </key>
+  </component>
+  <component name="RunManager" selected="IEx Mix.iex-mix">
+    <configuration name="iex" type="org.elixir_lang.iex.configuration.ConfigurationType" factoryName="IEx">
+      <module-filters inherit-application-module-filters="true" />
+      <method v="2" />
+    </configuration>
+    <configuration name="iex-mix" type="org.elixir_lang.iex.mix.configuration.Type" factoryName="IEx Mix">
+      <module-filters inherit-application-module-filters="true" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="IEx.iex" />
+      <item itemvalue="IEx Mix.iex-mix" />
+    </list>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d13f45df-4d81-4bcc-a4d4-45b59bbcf6b9" name="Default Changelist" comment="" />
+      <created>1578255952116</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1578255952116</updated>
+      <workItem from="1578255954080" duration="80000" />
+      <workItem from="1578258493695" duration="2294000" />
+      <workItem from="1578313747315" duration="5267000" />
+      <workItem from="1578328218707" duration="2552000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="419" y="171" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1578328323126">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="419" y="171" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1578328323126" />
+    <state x="693" y="223" width="532" height="597" key="FileChooserDialogImpl" timestamp="1578313762935">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="693" y="223" width="532" height="597" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1578313762935" />
+    <state width="1868" height="262" key="GridCell.Tab.0.bottom" timestamp="1578330681243">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1868" height="262" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1578330681243" />
+    <state width="1868" height="262" key="GridCell.Tab.0.center" timestamp="1578330681243">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1868" height="262" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1578330681243" />
+    <state width="1868" height="262" key="GridCell.Tab.0.left" timestamp="1578330681242">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1868" height="262" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1578330681242" />
+    <state width="1868" height="262" key="GridCell.Tab.0.right" timestamp="1578330681243">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1868" height="262" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1578330681243" />
+    <state x="326" y="66" key="SettingsEditor" timestamp="1578256027908">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="326" y="66" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1578256027908" />
+  </component>
+</project>
