@@ -24,3 +24,6 @@ ex_graph-*.tar
 
 # pycharm
 .idea/
+
+# database file
+*.db
