@@ -2,17 +2,10 @@ defmodule ExGraph do
   @moduledoc """
   Documentation for ExGraph.
   """
+  use Application
 
-  @doc """
-  Hello world.
-
-  ## Examples
-
-      iex> ExGraph.hello()
-      :world
-
-  """
-  def hello do
-    :world
+  @impl true
+  def start(_type, _args) do
+    ExGraph.Supervisor.start_link(name: ExGraph.Supervisor)
   end
 end

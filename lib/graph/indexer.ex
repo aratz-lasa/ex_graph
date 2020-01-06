@@ -1,26 +1,26 @@
-defmodule Graph.Indexer do
+defmodule ExGraph.Indexer do
   @moduledoc false
   use GenServer
 
   # API
-  def start_link() do
-    GenServer.start_link(__MODULE__, :ok, name: Graph.Indexer)
+  def start_link(opts: opts) do
+    GenServer.start_link(__MODULE__, :ok, opts)
   end
 
   def add_index(index_type, index, index_value) do
-    GenServer.cast(Graph.Indexer, {:add_index, {index_type, index, index_value}})
+    GenServer.cast(ExGraph.Indexer, {:add_index, {index_type, index, index_value}})
   end
 
   def remove_index(index_type, index, index_value) do
-    GenServer.cast(Graph.Indexer, {:remove_index, {index_type, index, index_value}})
+    GenServer.cast(ExGraph.Indexer, {:remove_index, {index_type, index, index_value}})
   end
 
   def get_index(index_type, index) do
-    GenServer.call(Graph.Indexer, {:get_index, {index_type, index}})
+    GenServer.call(ExGraph.Indexer, {:get_index, {index_type, index}})
   end
 
   def get_indexes(index_type) do
-    GenServer.call(Graph.Indexer, {:get_indexes, index_type})
+    GenServer.call(ExGraph.Indexer, {:get_indexes, index_type})
   end
 
   # Callbacks

@@ -1,11 +1,24 @@
-defmodule Graph.Vertex do
+defmodule ExGraph.Vertex do
   @moduledoc false
-  use GenServer
+  use GenServer, restart: :temporary
 
   # API
-  def start_link(index, labels \\ [], keys \\ %{}) do
+  def new_vertex(%{index: index, labels: labels, keys: keys}) do
+    new_vertex(index, labels, keys)
+  end
+
+  def new_vertex(index, labels \\ [], keys \\ %{}) do
     name = index_to_name(index)
-    GenServer.start_link(__MODULE__, {index, labels, keys}, name: name)
+
+    {:ok, _ref} =
+      DynamicSupervisor.start_child(
+        ExGraph.VertexSupervisor,
+        {__MODULE__, index: index, labels: labels, keys: keys, opts: [name: name]}
+      )
+  end
+
+  def start_link(index: index, labels: labels, keys: keys, opts: opts) do
+    GenServer.start_link(__MODULE__, {index, labels, keys}, opts)
   end
 
   def add_edge(vertex_index, edge_index) do
@@ -57,8 +70,10 @@ defmodule Graph.Vertex do
   @impl true
   def init({index, labels, keys}) do
     state = %{:index => index, :edges => [], :labels => labels, :keys => keys}
-    Graph.Indexer.add_index(:vertex_index, index, nil)
-    Enum.each(labels, fn l -> Graph.Indexer.add_index(:label, l, index) end)
+    persist_to_disk(index, state)
+
+    ExGraph.Indexer.add_index(:vertex_index, index, nil)
+    Enum.each(labels, fn l -> ExGraph.Indexer.add_index(:label, l, index) end)
     {:ok, state}
   end
 
@@ -78,50 +93,64 @@ defmodule Graph.Vertex do
   end
 
   @impl true
-  def handle_cast({:add_edge, edge_index}, state = %{edges: edges}) do
+  def handle_cast({:add_edge, edge_index}, state = %{index: index, edges: edges}) do
     Process.monitor(index_to_name(edge_index))
     edges = [edge_index | edges]
-    {:noreply, %{state | edges: edges}}
+    state = %{state | edges: edges}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:remove_edge, edge_index}, state = %{edges: edges}) do
+  def handle_cast({:remove_edge, edge_index}, state = %{index: index, edges: edges}) do
     Process.demonitor(index_to_name(edge_index))
     edges = List.delete(edges, edge_index)
-    {:noreply, %{state | edges: edges}}
+    state = %{state | edges: edges}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
   def handle_cast({:add_label, label}, state = %{index: index, labels: labels}) do
     labels = [label | labels]
-    Graph.Indexer.add_index(:label, label, index)
-    {:noreply, %{state | labels: labels}}
+    ExGraph.Indexer.add_index(:label, label, index)
+    state = %{state | labels: labels}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
   def handle_cast({:remove_label, label}, state = %{index: index, labels: labels}) do
     labels = List.delete(labels, label)
-    Graph.Indexer.remove_index(:label, label, index)
-    {:noreply, %{state | labels: labels}}
+    ExGraph.Indexer.remove_index(:label, label, index)
+    state = %{state | labels: labels}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:add_key, key, value}, state = %{keys: keys}) do
+  def handle_cast({:add_key, key, value}, state = %{index: index, keys: keys}) do
     keys = Map.put(keys, key, value)
-    {:noreply, %{state | keys: keys}}
+    state = %{state | keys: keys}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:remove_key, key}, state = %{keys: keys}) do
+  def handle_cast({:remove_key, key}, state = %{index: index, keys: keys}) do
     keys = Map.delete(keys, key)
-    {:noreply, %{state | keys: keys}}
+    state = %{state | keys: keys}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
-  def handle_info({:DOWN, _ref, :process, pid, _reason}, state = %{edges: edges}) do
+  def handle_info({:DOWN, _ref, :process, pid, _reason}, state = %{index: index, edges: edges}) do
     name = elem(pid, 0)
     edges = List.delete(edges, name_to_index(name))
-    {:noreply, %{state | edges: edges}}
+    state = %{state | edges: edges}
+    persist_to_disk(index, state)
+    {:noreply, state}
   end
 
   @impl true
@@ -131,12 +160,16 @@ defmodule Graph.Vertex do
 
   # Utils
   defp index_to_name(index) do
-    String.to_atom("Graph.Edge.#{index}")
+    String.to_atom("ExGraph.Vertex.#{index}")
   end
 
   defp name_to_index(name) do
     to_string(name)
     |> String.split(".")
     |> List.last()
+  end
+
+  defp persist_to_disk(index, state) do
+    ExGraph.Disk.update_vertex(index, state)
   end
 end
