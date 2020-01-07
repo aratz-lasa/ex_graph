@@ -10,8 +10,8 @@ defmodule ExGraph.Supervisor do
   def init(:ok) do
     children = [
       {ExGraph.Indexer, opts: [name: ExGraph.Indexer]},
-      {ExGraph.Disk, path: "graph.db", opts: [name: ExGraph.Disk]},
-      {DynamicSupervisor, name: ExGraph.VertexSupervisor, strategy: :one_for_one}
+      {DynamicSupervisor, name: ExGraph.VertexSupervisor, strategy: :one_for_one},
+      {ExGraph.Disk, path: "graph.db", opts: [name: ExGraph.Disk]}
     ]
 
     Supervisor.init(children, strategy: :one_for_all)

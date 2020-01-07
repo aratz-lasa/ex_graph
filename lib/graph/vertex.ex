@@ -3,22 +3,26 @@ defmodule ExGraph.Vertex do
   use GenServer, restart: :temporary
 
   # API
+  @doc """
+    Function called when loading vertex from disk, instead of creating a new one
+  """
   def new_vertex(%{index: index, labels: labels, keys: keys}) do
-    new_vertex(index, labels, keys)
+    new_vertex(index, labels, keys, true)
   end
 
-  def new_vertex(index, labels \\ [], keys \\ %{}) do
+  def new_vertex(index, labels \\ [], keys \\ %{}, revived \\ false) do
     name = index_to_name(index)
 
     {:ok, _ref} =
       DynamicSupervisor.start_child(
         ExGraph.VertexSupervisor,
-        {__MODULE__, index: index, labels: labels, keys: keys, opts: [name: name]}
+        {__MODULE__,
+         index: index, labels: labels, keys: keys, revived: revived, opts: [name: name]}
       )
   end
 
-  def start_link(index: index, labels: labels, keys: keys, opts: opts) do
-    GenServer.start_link(__MODULE__, {index, labels, keys}, opts)
+  def start_link(index: index, labels: labels, keys: keys, revived: revived, opts: opts) do
+    GenServer.start_link(__MODULE__, {index, labels, keys, revived}, opts)
   end
 
   def add_edge(vertex_index, edge_index) do
@@ -68,9 +72,12 @@ defmodule ExGraph.Vertex do
 
   # Callbacks
   @impl true
-  def init({index, labels, keys}) do
+  def init({index, labels, keys, revived}) do
     state = %{:index => index, :edges => [], :labels => labels, :keys => keys}
-    persist_to_disk(index, state)
+
+    if !revived do
+      persist_to_disk(index, state)
+    end
 
     ExGraph.Indexer.add_index(:vertex_index, index, nil)
     Enum.each(labels, fn l -> ExGraph.Indexer.add_index(:label, l, index) end)
@@ -170,6 +177,6 @@ defmodule ExGraph.Vertex do
   end
 
   defp persist_to_disk(index, state) do
-    ExGraph.Disk.update_vertex(index, state)
+    ExGraph.Disk.update_vertex(index_to_name(index), state)
   end
 end
