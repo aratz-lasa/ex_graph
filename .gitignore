@@ -27,3 +27,4 @@ ex_graph-*.tar
 
 # database file
 *.db
+*.db.*

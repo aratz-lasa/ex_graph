@@ -76,7 +76,7 @@ defmodule ExGraph.Vertex do
     state = %{:index => index, :edges => [], :labels => labels, :keys => keys}
 
     if !revived do
-      persist_to_disk(index, state)
+      persist_to_disk(state)
     end
 
     ExGraph.Indexer.add_index(:vertex_index, index, nil)
@@ -100,20 +100,20 @@ defmodule ExGraph.Vertex do
   end
 
   @impl true
-  def handle_cast({:add_edge, edge_index}, state = %{index: index, edges: edges}) do
+  def handle_cast({:add_edge, edge_index}, state = %{edges: edges}) do
     Process.monitor(index_to_name(edge_index))
     edges = [edge_index | edges]
     state = %{state | edges: edges}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:remove_edge, edge_index}, state = %{index: index, edges: edges}) do
+  def handle_cast({:remove_edge, edge_index}, state = %{edges: edges}) do
     Process.demonitor(index_to_name(edge_index))
     edges = List.delete(edges, edge_index)
     state = %{state | edges: edges}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
@@ -122,7 +122,7 @@ defmodule ExGraph.Vertex do
     labels = [label | labels]
     ExGraph.Indexer.add_index(:label, label, index)
     state = %{state | labels: labels}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
@@ -131,32 +131,32 @@ defmodule ExGraph.Vertex do
     labels = List.delete(labels, label)
     ExGraph.Indexer.remove_index(:label, label, index)
     state = %{state | labels: labels}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:add_key, key, value}, state = %{index: index, keys: keys}) do
+  def handle_cast({:add_key, key, value}, state = %{keys: keys}) do
     keys = Map.put(keys, key, value)
     state = %{state | keys: keys}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
   @impl true
-  def handle_cast({:remove_key, key}, state = %{index: index, keys: keys}) do
+  def handle_cast({:remove_key, key}, state = %{keys: keys}) do
     keys = Map.delete(keys, key)
     state = %{state | keys: keys}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
   @impl true
-  def handle_info({:DOWN, _ref, :process, pid, _reason}, state = %{index: index, edges: edges}) do
+  def handle_info({:DOWN, _ref, :process, pid, _reason}, state = %{edges: edges}) do
     name = elem(pid, 0)
     edges = List.delete(edges, name_to_index(name))
     state = %{state | edges: edges}
-    persist_to_disk(index, state)
+    persist_to_disk(state)
     {:noreply, state}
   end
 
@@ -176,7 +176,7 @@ defmodule ExGraph.Vertex do
     |> List.last()
   end
 
-  defp persist_to_disk(index, state) do
+  defp persist_to_disk(state = %{index: index}) do
     ExGraph.Disk.update_vertex(index_to_name(index), state)
   end
 end
